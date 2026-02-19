@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FastREST — PHP REST Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet" />
+<style>
+  /* ── Reset & Tokens ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0b0e13;
+    --surface:   #111620;
+    --surface2:  #161c28;
+    --border:    #1e2635;
+    --accent:    #00d4a0;
+    --accent2:   #0099ff;
+    --warn:      #ff6b4a;
+    --text:      #c8d4e8;
+    --text-dim:  #5a6a85;
+    --text-head: #e8f0ff;
+    --code-bg:   #0d1117;
+
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --nav-w: 260px;
+    --radius: 8px;
+  }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ────────────────────────────────────────────────── */
+  nav {
+    width: var(--nav-w);
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 2rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .nav-logo {
+    padding: 1.75rem 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .nav-logo .wordmark {
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-head);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nav-logo .wordmark span {
+    color: var(--accent);
+  }
+
+  .nav-logo .badge {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(0,212,160,0.1);
+    border: 1px solid rgba(0,212,160,0.25);
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+  }
+
+  nav .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    padding: 1.25rem 1.5rem 0.4rem;
+  }
+
+  nav a {
+    display: block;
+    padding: 0.38rem 1.5rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.15s, background 0.15s;
+    border-left: 2px solid transparent;
+    line-height: 1.4;
+  }
+
+  nav a:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,212,160,0.06); }
+
+  /* ── Main ───────────────────────────────────────────────────── */
+  main {
+    flex: 1;
+    max-width: 860px;
+    padding: 4rem 3rem 8rem;
+    margin: 0 auto;
+  }
+
+  /* ── Hero ───────────────────────────────────────────────────── */
+  .hero {
+    margin-bottom: 5rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -4rem; right: -3rem;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(0,212,160,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    font-weight: 800;
+    color: var(--text-head);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--text);
+    max-width: 580px;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .pill {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--surface);
+  }
+
+  .pill.green { border-color: rgba(0,212,160,0.3); color: var(--accent); background: rgba(0,212,160,0.07); }
+  .pill.blue  { border-color: rgba(0,153,255,0.3); color: var(--accent2); background: rgba(0,153,255,0.07); }
+  .pill.red   { border-color: rgba(255,107,74,0.3); color: var(--warn); background: rgba(255,107,74,0.07); }
+
+  /* ── Sections ───────────────────────────────────────────────── */
+  section {
+    margin-bottom: 4.5rem;
+    scroll-margin-top: 2rem;
+  }
+
+  h2 {
+    font-family: var(--font-head);
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--text-head);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  h2 .icon {
+    font-size: 1rem;
+    opacity: 0.5;
+  }
+
+  h3 {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-head);
+    letter-spacing: -0.01em;
+    margin: 2rem 0 0.6rem;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  strong { color: var(--text-head); font-weight: 600; }
+
+  /* ── Code blocks ────────────────────────────────────────────── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.4rem;
+    overflow-x: auto;
+    margin: 1rem 0 1.5rem;
+    position: relative;
+  }
+
+  pre code {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #adbac7;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.83em;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.12em 0.4em;
+    color: var(--accent);
+  }
+
+  pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+
+  /* Syntax */
+  .kw  { color: #f47067; }
+  .fn  { color: #79c0ff; }
+  .str { color: #96d0ff; }
+  .cm  { color: #465572; font-style: italic; }
+  .cl  { color: #ffa657; }
+  .acc { color: #00d4a0; }
+  .num { color: #f2cc60; }
+  .var { color: #c8d4e8; }
+
+  /* lang label */
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 0.6rem; right: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    opacity: 0.6;
+  }
+
+  /* ── Tables ─────────────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-dim);
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid rgba(30,38,53,0.6);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td code { font-size: 0.78em; }
+
+  /* ── Callout boxes ──────────────────────────────────────────── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 1.5rem;
+    border-left: 3px solid;
+    font-size: 0.9rem;
+  }
+
+  .callout.tip   { background: rgba(0,212,160,0.07); border-color: var(--accent); }
+  .callout.warn  { background: rgba(255,107,74,0.07); border-color: var(--warn); }
+  .callout.info  { background: rgba(0,153,255,0.07); border-color: var(--accent2); }
+
+  .callout-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .callout.tip  .callout-label { color: var(--accent); }
+  .callout.warn .callout-label { color: var(--warn); }
+  .callout.info .callout-label { color: var(--accent2); }
+
+  /* ── PSR grid ───────────────────────────────────────────────── */
+  .psr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 0.75rem;
+    margin: 1.25rem 0 2rem;
+  }
+
+  .psr-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    transition: border-color 0.2s;
+  }
+
+  .psr-card:hover { border-color: rgba(0,212,160,0.35); }
+
+  .psr-card .std {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+
+  .psr-card .role {
+    font-size: 0.78rem;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .psr-card .impl {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  /* ── Step blocks ────────────────────────────────────────────── */
+  .steps { counter-reset: step; margin: 1.5rem 0; }
+
+  .step {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    counter-increment: step;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 2rem; height: 2rem;
+    border-radius: 50%;
+    background: rgba(0,212,160,0.12);
+    border: 1px solid rgba(0,212,160,0.3);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 0.1rem;
+  }
+
+  .step-body { flex: 1; }
+  .step-body strong { display: block; margin-bottom: 0.25rem; }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { padding: 2.5rem 1.5rem 6rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ─────────────────────────────────────────────────── -->
+<nav id="sidebar">
+  <div class="nav-logo">
+    <div class="wordmark">Fast<span>REST</span></div>
+    <div class="badge">v2 · PSR-Compliant</div>
+  </div>
+
+  <span class="section-label">Getting Started</span>
+  <a href="#intro">Introduction</a>
+  <a href="#quickstart">Quick Start</a>
+  <a href="#concepts">Core Concepts</a>
+
+  <span class="section-label">Framework</span>
+  <a href="#routing">Routing</a>
+  <a href="#controllers">Controllers</a>
+  <a href="#responses">Responses & Errors</a>
+  <a href="#middleware">Middleware</a>
+  <a href="#di">Dependency Injection</a>
+
+  <span class="section-label">Data</span>
+  <a href="#database">Database</a>
+  <a href="#querybuilder">QueryBuilder</a>
+
+  <span class="section-label">Utilities</span>
+  <a href="#logging">Logging</a>
+  <a href="#httpclient">HTTP Client</a>
+  <a href="#oauth">OAuth 1.0</a>
+
+  <span class="section-label">Extension</span>
+  <a href="#swapping">Swapping Modules</a>
+  <a href="#config">Configuration</a>
+  <a href="#testing">Testing</a>
+  <a href="#migrating">Migrating from v1</a>
+  <a href="#structure">Project Structure</a>
+</nav>
+
+<!-- ── Main ───────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Hero -->
+  <div class="hero" id="intro">
+    <div class="hero-eyebrow">PHP REST Framework</div>
+    <h1>The fastest way to build<br/><em>PHP REST APIs.</em></h1>
+    <p class="hero-desc">
+      FastREST started as a zero-learning-curve framework — drop in a controller, name a method, get a route. That spirit is unchanged in v2. What <em>is</em> changed is everything underneath: full PSR compliance, proper HTTP verb routing, secure parameterised queries, an injectable middleware pipeline, and a DI container that makes every component swappable.
+    </p>
+    <div class="hero-pills">
+      <span class="pill green">PSR-3 Logging</span>
+      <span class="pill green">PSR-4 Autoloading</span>
+      <span class="pill blue">PSR-7 HTTP Messages</span>
+      <span class="pill blue">PSR-11 Container</span>
+      <span class="pill blue">PSR-15 Middleware</span>
+      <span class="pill">PHP 8.1+</span>
+      <span class="pill">MIT License</span>
+    </div>
+  </div>
+
+  <!-- Quick Start -->
+  <section id="quickstart">
+    <h2><span class="icon">⚡</span> Quick Start</h2>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Install dependencies</strong>
+        <pre data-lang="bash"><code>composer install</code></pre>
+      </div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Set up environment</strong>
+        <pre data-lang="bash"><code>cp .env.example .env
+<span class="cm"># Fill in DB credentials and log config</span></code></pre>
+      </div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Serve locally</strong>
+        <pre data-lang="bash"><code>php -S localhost:8000 public/index.php</code></pre>
+      </div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Run tests</strong>
+        <pre data-lang="bash"><code>composer test</code></pre>
+      </div></div>
+    </div>
+
+    <p>Point a production web server's document root at <code>/public</code>. Everything above it is private.</p>
+    <pre data-lang="nginx"><code><span class="kw">root</span> /var/www/fastrest/public;
+<span class="kw">location</span> / {
+    try_files $uri $uri/ /index.php?$query_string;
+}</code></pre>
+  </section>
+
+  <!-- Core Concepts -->
+  <section id="concepts">
+    <h2><span class="icon">🧩</span> Core Concepts</h2>
+    <p>FastREST v2 is built on five PHP standard interfaces. You never depend on a concrete implementation — only on the interface. This means every layer is replaceable without touching your business logic.</p>
+
+    <div class="psr-grid">
+      <div class="psr-card"><div class="std">PSR-4</div><div class="role">Autoloading</div><div class="impl">Composer</div></div>
+      <div class="psr-card"><div class="std">PSR-3</div><div class="role">Logging</div><div class="impl">Monolog</div></div>
+      <div class="psr-card"><div class="std">PSR-7</div><div class="role">HTTP Messages</div><div class="impl">Nyholm/PSR-7</div></div>
+      <div class="psr-card"><div class="std">PSR-11</div><div class="role">DI Container</div><div class="impl">PHP-DI</div></div>
+      <div class="psr-card"><div class="std">PSR-15</div><div class="role">Middleware</div><div class="impl">Built-in pipeline</div></div>
+    </div>
+
+    <p>A request flows through the system like this:</p>
+    <pre data-lang="text"><code>Browser / API Client
+        ↓
+  public/index.php          ← Only public file
+        ↓
+  MiddlewarePipeline         ← PSR-15
+  ├── RequestLoggerMiddleware
+  ├── CorsMiddleware
+  ├── AuthMiddleware         ← your custom middleware
+  ├── JsonBodyParserMiddleware
+  └── Router                 ← PSR-15 final handler
+        ↓
+  Controller method          ← plain class, injected deps
+        ↓
+  Response::json(...)        ← PSR-7 ResponseInterface
+        ↓
+  public/index.php emits it</code></pre>
+  </section>
+
+  <!-- Routing -->
+  <section id="routing">
+    <h2><span class="icon">🗺</span> Routing</h2>
+    <p>Routes are defined explicitly in <code>config/routes.php</code>, one line per route. Each maps an HTTP verb and a URI pattern to a controller method.</p>
+
+    <pre data-lang="php"><code><span class="cm">// config/routes.php</span>
+<span class="kw">return</span> <span class="kw">static function</span> (<span class="cl">Router</span> <span class="var">$router</span>): <span class="kw">void</span> {
+
+    <span class="var">$router</span>-><span class="fn">get</span>(<span class="str">'/products'</span>,          [<span class="cl">ProductController</span>::<span class="kw">class</span>, <span class="str">'index'</span>]);
+    <span class="var">$router</span>-><span class="fn">get</span>(<span class="str">'/products/{id}'</span>,     [<span class="cl">ProductController</span>::<span class="kw">class</span>, <span class="str">'show'</span>]);
+    <span class="var">$router</span>-><span class="fn">post</span>(<span class="str">'/products'</span>,        [<span class="cl">ProductController</span>::<span class="kw">class</span>, <span class="str">'store'</span>]);
+    <span class="var">$router</span>-><span class="fn">put</span>(<span class="str">'/products/{id}'</span>,    [<span class="cl">ProductController</span>::<span class="kw">class</span>, <span class="str">'update'</span>]);
+    <span class="var">$router</span>-><span class="fn">delete</span>(<span class="str">'/products/{id}'</span>, [<span class="cl">ProductController</span>::<span class="kw">class</span>, <span class="str">'destroy'</span>]);
+    <span class="var">$router</span>-><span class="fn">any</span>(<span class="str">'/health'</span>,           [<span class="cl">HealthController</span>::<span class="kw">class</span>, <span class="str">'check'</span>]);
+
+};</code></pre>
+
+    <h3>Route parameters</h3>
+    <p>Segments in <code>{braces}</code> are captured and available as request attributes:</p>
+    <pre data-lang="php"><code><span class="kw">public function</span> <span class="fn">show</span>(<span class="cl">ServerRequestInterface</span> <span class="var">$request</span>): <span class="cl">ResponseInterface</span>
+{
+    <span class="var">$id</span> = <span class="var">$request</span>-><span class="fn">getAttribute</span>(<span class="str">'id'</span>); <span class="cm">// "42"</span>
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-label">Automatic 405</div>
+      If a URI matches but the HTTP method doesn't, the framework returns <code>405 Method Not Allowed</code> with a correct <code>Allow</code> header — you write none of that code.
+    </div>
+  </section>
+
+  <!-- Controllers -->
+  <section id="controllers">
+    <h2><span class="icon">🎛</span> Controllers</h2>
+    <p>Controllers are plain PHP classes. No base class to extend, no interface to implement. Dependencies go in the constructor — the DI container resolves them automatically.</p>
+
+    <pre data-lang="php"><code><span class="kw">namespace</span> <span class="cl">FastREST\Controllers</span>;
+
+<span class="kw">use</span> <span class="cl">FastREST\Database\Database</span>;
+<span class="kw">use</span> <span class="cl">FastREST\Http\Response</span>;
+<span class="kw">use</span> <span class="cl">FastREST\Exceptions\HttpException</span>;
+<span class="kw">use</span> <span class="cl">Psr\Http\Message\ResponseInterface</span>;
+<span class="kw">use</span> <span class="cl">Psr\Http\Message\ServerRequestInterface</span>;
+<span class="kw">use</span> <span class="cl">Psr\Log\LoggerInterface</span>;
+
+<span class="kw">class</span> <span class="cl">ProductController</span>
+{
+    <span class="kw">public function</span> <span class="fn">__construct</span>(
+        <span class="kw">private readonly</span> <span class="cl">Database</span>        <span class="var">$db</span>,
+        <span class="kw">private readonly</span> <span class="cl">LoggerInterface</span> <span class="var">$logger</span>,
+    ) {}
+
+    <span class="cm">// GET /products</span>
+    <span class="kw">public function</span> <span class="fn">index</span>(<span class="cl">ServerRequestInterface</span> <span class="var">$request</span>): <span class="cl">ResponseInterface</span>
+    {
+        <span class="var">$rows</span> = <span class="var">$this</span>-><span class="var">db</span>-><span class="fn">select</span>(<span class="str">'products'</span>);
+        <span class="kw">return</span> <span class="cl">Response</span>::<span class="fn">json</span>([<span class="str">'status'</span> => <span class="str">'success'</span>, <span class="str">'data'</span> => <span class="var">$rows</span>]);
+    }
+
+    <span class="cm">// GET /products/{id}</span>
+    <span class="kw">public function</span> <span class="fn">show</span>(<span class="cl">ServerRequestInterface</span> <span class="var">$request</span>): <span class="cl">ResponseInterface</span>
+    {
+        <span class="var">$id</span>   = (<span class="kw">int</span>) <span class="var">$request</span>-><span class="fn">getAttribute</span>(<span class="str">'id'</span>);
+        <span class="var">$rows</span> = <span class="var">$this</span>-><span class="var">db</span>-><span class="fn">select</span>(<span class="str">'products'</span>, [], [<span class="str">'id'</span> => <span class="var">$id</span>]);
+
+        <span class="kw">if</span> (<span class="fn">empty</span>(<span class="var">$rows</span>)) {
+            <span class="kw">throw new</span> <span class="cl">HttpException</span>(<span class="num">404</span>, <span class="str">"Product </span><span class="var">$id</span><span class="str"> not found."</span>);
+        }
+
+        <span class="kw">return</span> <span class="cl">Response</span>::<span class="fn">json</span>([<span class="str">'status'</span> => <span class="str">'success'</span>, <span class="str">'data'</span> => <span class="var">$rows</span>[<span class="num">0</span>]]);
+    }
+}</code></pre>
+
+    <h3>Reading request data</h3>
+    <pre data-lang="php"><code><span class="cm">// Query string: GET /products?status=active</span>
+<span class="var">$status</span> = <span class="var">$request</span>-><span class="fn">getQueryParams</span>()[<span class="str">'status'</span>] ?? <span class="kw">null</span>;
+
+<span class="cm">// JSON body (parsed by middleware): POST with Content-Type: application/json</span>
+<span class="var">$body</span> = (<span class="kw">array</span>) <span class="var">$request</span>-><span class="fn">getParsedBody</span>();
+
+<span class="cm">// Route parameter</span>
+<span class="var">$id</span> = <span class="var">$request</span>-><span class="fn">getAttribute</span>(<span class="str">'id'</span>);
+
+<span class="cm">// Header</span>
+<span class="var">$token</span> = <span class="var">$request</span>-><span class="fn">getHeaderLine</span>(<span class="str">'Authorization'</span>);</code></pre>
+  </section>
+
+  <!-- Responses -->
+  <section id="responses">
+    <h2><span class="icon">📤</span> Responses &amp; Errors</h2>
+
+    <h3>Response factory</h3>
+    <pre data-lang="php"><code><span class="kw">use</span> <span class="cl">FastREST\Http\Response</span>;
+
+<span class="cm">// 200 OK</span>
+<span class="kw">return</span> <span class="cl">Response</span>::<span class="fn">json</span>([<span class="str">'status'</span> => <span class="str">'success'</span>, <span class="str">'data'</span> => <span class="var">$rows</span>]);
+
+<span class="cm">// 201 Created</span>
+<span class="kw">return</span> <span class="cl">Response</span>::<span class="fn">json</span>([<span class="str">'status'</span> => <span class="str">'success'</span>], <span class="num">201</span>);
+
+<span class="cm">// 204 No Content (after DELETE)</span>
+<span class="kw">return</span> <span class="cl">Response</span>::<span class="fn">noContent</span>();
+
+<span class="cm">// Structured error response</span>
+<span class="kw">return</span> <span class="cl">Response</span>::<span class="fn">error</span>(<span class="str">'Validation failed'</span>, <span class="num">422</span>, [<span class="str">'field'</span> => <span class="str">'name is required'</span>]);</code></pre>
+
+    <h3>Throwing HTTP errors</h3>
+    <p>Throw <code>HttpException</code> from anywhere — controllers, middleware, or services. The pipeline catches it and sends a JSON error response with the right status code.</p>
+    <pre data-lang="php"><code><span class="kw">throw new</span> <span class="cl">HttpException</span>(<span class="num">404</span>, <span class="str">'Product not found.'</span>);
+<span class="kw">throw new</span> <span class="cl">HttpException</span>(<span class="num">422</span>, <span class="str">'Missing required fields.'</span>);
+<span class="kw">throw new</span> <span class="cl">HttpException</span>(<span class="num">405</span>, <span class="str">'Method Not Allowed'</span>, [<span class="str">'Allow'</span> => <span class="str">'GET, POST'</span>]);</code></pre>
+
+    <p>The JSON error shape is always consistent:</p>
+    <pre data-lang="json"><code>{
+    <span class="str">"status"</span>:  <span class="str">"error"</span>,
+    <span class="str">"code"</span>:    <span class="num">404</span>,
+    <span class="str">"message"</span>: <span class="str">"Product not found."</span>
+}</code></pre>
+  </section>
+
+  <!-- Middleware -->
+  <section id="middleware">
+    <h2><span class="icon">🔗</span> Middleware</h2>
+    <p>Middleware wraps every request. It can inspect, modify, or short-circuit the request before it reaches a controller, and modify the response on the way back.</p>
+
+    <h3>Built-in middleware</h3>
+    <table>
+      <tr><th>Class</th><th>What it does</th></tr>
+      <tr><td><code>RequestLoggerMiddleware</code></td><td>Logs method, URI, IP, status code, duration</td></tr>
+      <tr><td><code>JsonBodyParserMiddleware</code></td><td>Decodes <code>application/json</code> bodies into <code>getParsedBody()</code></td></tr>
+      <tr><td><code>CorsMiddleware</code></td><td>Adds CORS headers; handles OPTIONS preflight (204)</td></tr>
+    </table>
+
+    <h3>Writing a middleware</h3>
+    <pre data-lang="php"><code><span class="kw">use</span> <span class="cl">Psr\Http\Message\ResponseInterface</span>;
+<span class="kw">use</span> <span class="cl">Psr\Http\Message\ServerRequestInterface</span>;
+<span class="kw">use</span> <span class="cl">Psr\Http\Server\MiddlewareInterface</span>;
+<span class="kw">use</span> <span class="cl">Psr\Http\Server\RequestHandlerInterface</span>;
+
+<span class="kw">class</span> <span class="cl">AuthMiddleware</span> <span class="kw">implements</span> <span class="cl">MiddlewareInterface</span>
+{
+    <span class="kw">public function</span> <span class="fn">__construct</span>(<span class="kw">private readonly</span> <span class="cl">TokenValidator</span> <span class="var">$validator</span>) {}
+
+    <span class="kw">public function</span> <span class="fn">process</span>(
+        <span class="cl">ServerRequestInterface</span>  <span class="var">$request</span>,
+        <span class="cl">RequestHandlerInterface</span> <span class="var">$handler</span>,
+    ): <span class="cl">ResponseInterface</span> {
+        <span class="var">$token</span> = <span class="var">$request</span>-><span class="fn">getHeaderLine</span>(<span class="str">'Authorization'</span>);
+
+        <span class="kw">if</span> (!<span class="var">$this</span>-><span class="var">validator</span>-><span class="fn">isValid</span>(<span class="var">$token</span>)) {
+            <span class="kw">throw new</span> <span class="cl">HttpException</span>(<span class="num">401</span>, <span class="str">'Unauthorized'</span>);
+        }
+
+        <span class="cm">// Attach user to request — available in controllers via getAttribute()</span>
+        <span class="var">$request</span> = <span class="var">$request</span>-><span class="fn">withAttribute</span>(<span class="str">'user'</span>, <span class="var">$this</span>-><span class="var">validator</span>-><span class="fn">getUser</span>(<span class="var">$token</span>));
+
+        <span class="kw">return</span> <span class="var">$handler</span>-><span class="fn">handle</span>(<span class="var">$request</span>);
+    }
+}</code></pre>
+
+    <h3>Registering middleware</h3>
+    <p>Order matters — the pipeline runs top to bottom on the request, and bottom to top on the response.</p>
+    <pre data-lang="php"><code><span class="cm">// public/index.php</span>
+<span class="var">$pipeline</span> = <span class="kw">new</span> <span class="cl">MiddlewarePipeline</span>([
+    <span class="var">$container</span>-><span class="fn">get</span>(<span class="cl">RequestLoggerMiddleware</span>::<span class="kw">class</span>),  <span class="cm">// 1st — log everything</span>
+    <span class="var">$container</span>-><span class="fn">get</span>(<span class="cl">CorsMiddleware</span>::<span class="kw">class</span>),            <span class="cm">// 2nd — CORS headers</span>
+    <span class="var">$container</span>-><span class="fn">get</span>(<span class="cl">AuthMiddleware</span>::<span class="kw">class</span>),            <span class="cm">// 3rd — authentication</span>
+    <span class="var">$container</span>-><span class="fn">get</span>(<span class="cl">JsonBodyParserMiddleware</span>::<span class="kw">class</span>),  <span class="cm">// 4th — parse body</span>
+    <span class="var">$router</span>,                                           <span class="cm">// last — dispatch</span>
+]);</code></pre>
+  </section>
+
+  <!-- DI -->
+  <section id="di">
+    <h2><span class="icon">💉</span> Dependency Injection</h2>
+    <p>Services are wired in <code>config/container.php</code>. The container resolves constructor dependencies automatically — you never call <code>new</code> inside a controller.</p>
+
+    <pre data-lang="php"><code><span class="cm">// config/container.php</span>
+<span class="kw">use function</span> <span class="fn">DI\create</span>;
+<span class="kw">use function</span> <span class="fn">DI\factory</span>;
+<span class="kw">use function</span> <span class="fn">DI\get</span>;
+
+<span class="kw">return</span> [
+
+    <span class="cm">// Factory — full control</span>
+    <span class="cl">MyService</span>::<span class="kw">class</span> => <span class="fn">factory</span>(<span class="kw">function</span> (): <span class="cl">MyService</span> {
+        <span class="kw">return new</span> <span class="cl">MyService</span>(<span class="var">$_ENV</span>[<span class="str">'MY_API_KEY'</span>]);
+    }),
+
+    <span class="cm">// Autowired — PHP-DI reads the constructor type-hints</span>
+    <span class="cl">OrderService</span>::<span class="kw">class</span> => <span class="fn">create</span>(<span class="cl">OrderService</span>::<span class="kw">class</span>)
+        -><span class="fn">constructor</span>(<span class="fn">get</span>(<span class="cl">Database</span>::<span class="kw">class</span>), <span class="fn">get</span>(<span class="cl">Mailer</span>::<span class="kw">class</span>)),
+
+    <span class="cm">// Interface binding — swap the concrete class here, nothing else changes</span>
+    <span class="cl">CacheInterface</span>::<span class="kw">class</span> => <span class="fn">get</span>(<span class="cl">RedisCache</span>::<span class="kw">class</span>),
+
+];</code></pre>
+  </section>
+
+  <!-- Database -->
+  <section id="database">
+    <h2><span class="icon">🗄</span> Database</h2>
+    <p>Safe, parameterised CRUD. Column and table names are validated against an identifier regex. ORDER BY directions are whitelisted. No raw string interpolation anywhere.</p>
+
+    <h3>INSERT</h3>
+    <pre data-lang="php"><code><span class="var">$db</span>-><span class="fn">insert</span>(<span class="str">'products'</span>, [
+    <span class="str">'name'</span>   => <span class="str">'Widget'</span>,
+    <span class="str">'price'</span>  => <span class="num">9.99</span>,
+    <span class="str">'status'</span> => <span class="str">'active'</span>,
+]);
+<span class="cm">// Returns true on success, false on failure.</span></code></pre>
+
+    <h3>SELECT</h3>
+    <pre data-lang="php"><code><span class="cm">// All rows</span>
+<span class="var">$rows</span> = <span class="var">$db</span>-><span class="fn">select</span>(<span class="str">'products'</span>);
+
+<span class="cm">// Filtered, ordered, limited</span>
+<span class="var">$rows</span> = <span class="var">$db</span>-><span class="fn">select</span>(
+    table:   <span class="str">'products'</span>,
+    columns: [<span class="str">'id'</span>, <span class="str">'name'</span>, <span class="str">'price'</span>],
+    where:   [<span class="str">'status'</span> => <span class="str">'active'</span>],
+    order:   [<span class="str">'price'</span> => <span class="str">'DESC'</span>],
+    limit:   <span class="num">10</span>,
+);</code></pre>
+
+    <h3>UPDATE</h3>
+    <pre data-lang="php"><code><span class="var">$db</span>-><span class="fn">update</span>(<span class="str">'products'</span>, [<span class="str">'price'</span> => <span class="num">12.99</span>], [<span class="str">'id'</span> => <span class="num">5</span>]);</code></pre>
+
+    <h3>DELETE</h3>
+    <pre data-lang="php"><code><span class="var">$db</span>-><span class="fn">delete</span>(<span class="str">'products'</span>, [<span class="str">'id'</span> => <span class="num">5</span>]);</code></pre>
+
+    <h3>Parameterised raw query</h3>
+    <pre data-lang="php"><code><span class="var">$rows</span> = <span class="var">$db</span>-><span class="fn">preparedQuery</span>(
+    <span class="str">'SELECT * FROM products WHERE price BETWEEN :min AND :max'</span>,
+    [<span class="str">'min'</span> => <span class="num">5.0</span>, <span class="str">'max'</span> => <span class="num">50.0</span>],
+);</code></pre>
+
+    <div class="callout warn">
+      <div class="callout-label">Warning</div>
+      <code>$db->query($sql)</code> executes raw SQL without binding. Use only for trusted, hard-coded strings — never interpolate user input.
+    </div>
+  </section>
+
+  <!-- QueryBuilder -->
+  <section id="querybuilder">
+    <h2><span class="icon">🔨</span> QueryBuilder</h2>
+    <p>Fluent builder for complex SELECTs — joins, group by, having, multiple conditions.</p>
+
+    <pre data-lang="php"><code><span class="kw">use</span> <span class="cl">FastREST\Database\QueryBuilder</span>;
+
+<span class="var">$rows</span> = (<span class="kw">new</span> <span class="cl">QueryBuilder</span>(<span class="str">'products'</span>, [<span class="str">'p.id'</span>, <span class="str">'p.name'</span>, <span class="str">'c.name AS category'</span>]))
+    -><span class="fn">leftJoin</span>(<span class="str">'categories c'</span>, <span class="str">'p.category_id = c.id'</span>)
+    -><span class="fn">where</span>(<span class="str">'p.status'</span>, <span class="str">'='</span>, <span class="str">'active'</span>)
+    -><span class="fn">orWhere</span>(<span class="str">'p.featured'</span>, <span class="str">'='</span>, <span class="num">1</span>)
+    -><span class="fn">where</span>(<span class="str">'p.price'</span>, <span class="str">'>'</span>, <span class="num">0</span>)
+    -><span class="fn">groupBy</span>(<span class="str">'p.id'</span>)
+    -><span class="fn">having</span>(<span class="str">'COUNT(p.id) > 0'</span>)
+    -><span class="fn">orderBy</span>(<span class="str">'p.name'</span>, <span class="str">'ASC'</span>)
+    -><span class="fn">limit</span>(<span class="num">20</span>)
+    -><span class="fn">execute</span>(<span class="var">$db</span>);</code></pre>
+
+    <h3>Methods reference</h3>
+    <table>
+      <tr><th>Method</th><th>Description</th></tr>
+      <tr><td><code>where($col, $op, $value)</code></td><td>AND WHERE condition</td></tr>
+      <tr><td><code>orWhere($col, $op, $value)</code></td><td>OR WHERE condition</td></tr>
+      <tr><td><code>whereRaw($condition)</code></td><td>Raw AND WHERE (manual binding via <code>withParam</code>)</td></tr>
+      <tr><td><code>leftJoin($table, $on)</code></td><td>LEFT JOIN</td></tr>
+      <tr><td><code>innerJoin($table, $on)</code></td><td>INNER JOIN</td></tr>
+      <tr><td><code>join($type, $table, $on)</code></td><td>Any join type (INNER, LEFT, RIGHT, CROSS…)</td></tr>
+      <tr><td><code>groupBy($column)</code></td><td>GROUP BY</td></tr>
+      <tr><td><code>having($condition)</code></td><td>HAVING</td></tr>
+      <tr><td><code>orderBy($col, $dir)</code></td><td>ORDER BY — direction is whitelisted ASC/DESC</td></tr>
+      <tr><td><code>limit($n)</code></td><td>LIMIT</td></tr>
+      <tr><td><code>toSql()</code></td><td>Returns the SQL string</td></tr>
+      <tr><td><code>getParams()</code></td><td>Returns the bound params array</td></tr>
+      <tr><td><code>execute($db)</code></td><td>Runs the query and returns rows</td></tr>
+    </table>
+    <p>Allowed <code>where()</code> operators: <code>=</code>, <code>!=</code>, <code>&lt;&gt;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>LIKE</code>, <code>NOT LIKE</code>, <code>IN</code>, <code>NOT IN</code>, <code>IS NULL</code>, <code>IS NOT NULL</code></p>
+  </section>
+
+  <!-- Logging -->
+  <section id="logging">
+    <h2><span class="icon">📋</span> Logging</h2>
+    <p>The logger is a <code>Psr\Log\LoggerInterface</code> — any PSR-3 logger works. Monolog ships as the default. Inject it via constructor and use it normally:</p>
+
+    <pre data-lang="php"><code><span class="var">$this</span>-><span class="var">logger</span>-><span class="fn">debug</span>(<span class="str">'Cache miss'</span>,    [<span class="str">'key'</span> => <span class="var">$cacheKey</span>]);
+<span class="var">$this</span>-><span class="var">logger</span>-><span class="fn">info</span>(<span class="str">'User logged in'</span>, [<span class="str">'user_id'</span> => <span class="var">$id</span>]);
+<span class="var">$this</span>-><span class="var">logger</span>-><span class="fn">warning</span>(<span class="str">'Slow query'</span>,    [<span class="str">'ms'</span> => <span class="num">1200</span>]);
+<span class="var">$this</span>-><span class="var">logger</span>-><span class="fn">error</span>(<span class="str">'Payment failed'</span>, [<span class="str">'order'</span> => <span class="var">$id</span>]);</code></pre>
+
+    <p>Configure in <code>.env</code>:</p>
+    <pre data-lang="env"><code>LOG_CHANNEL=stderr      <span class="cm"># or: file</span>
+LOG_LEVEL=debug         <span class="cm"># minimum level to record</span>
+LOG_PATH=/var/log/app.log</code></pre>
+  </section>
+
+  <!-- HTTP Client -->
+  <section id="httpclient">
+    <h2><span class="icon">🌐</span> HTTP Client</h2>
+    <p>A cURL wrapper with proper error handling, all HTTP verbs, and SSL verification on by default. Errors are never swallowed — they throw and log.</p>
+
+    <pre data-lang="php"><code><span class="kw">use</span> <span class="cl">FastREST\Helpers\HttpClient</span>;
+
+<span class="var">$client</span> = <span class="kw">new</span> <span class="cl">HttpClient</span>(<span class="str">'https://api.example.com'</span>, <span class="var">$logger</span>);
+
+<span class="var">$response</span> = <span class="var">$client</span>-><span class="fn">get</span>(<span class="str">'/users'</span>, [<span class="str">'Authorization'</span> => <span class="str">'Bearer '</span> . <span class="var">$token</span>]);
+<span class="var">$response</span> = <span class="var">$client</span>-><span class="fn">post</span>(<span class="str">'/orders'</span>, [<span class="str">'product_id'</span> => <span class="num">5</span>, <span class="str">'qty'</span> => <span class="num">2</span>]);
+<span class="var">$response</span> = <span class="var">$client</span>-><span class="fn">put</span>(<span class="str">'/products/5'</span>, [<span class="str">'price'</span> => <span class="num">14.99</span>]);
+<span class="var">$response</span> = <span class="var">$client</span>-><span class="fn">patch</span>(<span class="str">'/products/5'</span>, [<span class="str">'status'</span> => <span class="str">'sale'</span>]);
+<span class="var">$response</span> = <span class="var">$client</span>-><span class="fn">delete</span>(<span class="str">'/products/5'</span>);
+
+<span class="cm">// Reading the response</span>
+<span class="var">$response</span>-><span class="var">statusCode</span>;          <span class="cm">// int</span>
+<span class="var">$response</span>-><span class="fn">isSuccess</span>();         <span class="cm">// true for 2xx</span>
+<span class="var">$response</span>-><span class="fn">json</span>();              <span class="cm">// decoded array or null</span>
+<span class="var">$response</span>-><span class="var">body</span>;                <span class="cm">// raw string</span>
+<span class="var">$response</span>-><span class="fn">getHeader</span>(<span class="str">'ETag'</span>);  <span class="cm">// response header</span></code></pre>
+  </section>
+
+  <!-- OAuth -->
+  <section id="oauth">
+    <h2><span class="icon">🔑</span> OAuth 1.0</h2>
+    <pre data-lang="php"><code><span class="kw">use</span> <span class="cl">FastREST\Helpers\OauthHelper</span>;
+
+<span class="var">$headers</span> = <span class="cl">OauthHelper</span>::<span class="fn">buildAuthorizationHeaders</span>(
+    method:         <span class="str">'POST'</span>,
+    url:            <span class="str">'https://api.example.com/oauth/request_token'</span>,
+    consumerKey:    <span class="var">$_ENV</span>[<span class="str">'OAUTH_CONSUMER_KEY'</span>],
+    consumerSecret: <span class="var">$_ENV</span>[<span class="str">'OAUTH_CONSUMER_SECRET'</span>],
+    token:          <span class="var">$accessToken</span>,       <span class="cm">// optional</span>
+    tokenSecret:    <span class="var">$accessTokenSecret</span>, <span class="cm">// optional</span>
+);
+
+<span class="var">$client</span>   = <span class="kw">new</span> <span class="cl">HttpClient</span>(<span class="str">'https://api.example.com'</span>, <span class="var">$logger</span>);
+<span class="var">$response</span> = <span class="var">$client</span>-><span class="fn">post</span>(<span class="str">'/resource'</span>, <span class="var">$body</span>, <span class="var">$headers</span>);</code></pre>
+    <p>The nonce uses <code>random_bytes()</code> — cryptographically secure, not <code>str_shuffle</code>.</p>
+  </section>
+
+  <!-- Swapping -->
+  <section id="swapping">
+    <h2><span class="icon">🔄</span> Swapping Modules</h2>
+    <p>Every component is bound to a standard interface. Swapping an implementation is a one-file change in <code>config/container.php</code>. Controllers and services never change.</p>
+
+    <h3>Swap the logger (PSR-3)</h3>
+    <pre data-lang="php"><code><span class="cm">// config/container.php</span>
+<span class="kw">use</span> <span class="cl">Psr\Log\LoggerInterface</span>;
+<span class="kw">use</span> <span class="cl">Acme\MyCustomLogger</span>;
+
+<span class="kw">return</span> [
+    <span class="cl">LoggerInterface</span>::<span class="kw">class</span> => <span class="fn">factory</span>(<span class="kw">fn</span>() => <span class="kw">new</span> <span class="cl">MyCustomLogger</span>()),
+];</code></pre>
+    <p>Every class that type-hints <code>LoggerInterface</code> now receives <code>MyCustomLogger</code>.</p>
+
+    <h3>Swap the DI container (PSR-11)</h3>
+    <p>The framework only calls <code>$container->get(ClassName::class)</code> in the router. To replace PHP-DI with e.g. League Container or Symfony DI:</p>
+    <pre data-lang="php"><code><span class="cm">// public/index.php</span>
+<span class="var">$container</span> = (<span class="kw">new</span> <span class="cl">YourContainerBuilder</span>())-><span class="fn">build</span>();
+<span class="var">$router</span>    = <span class="kw">new</span> <span class="cl">Router</span>(<span class="var">$container</span>);  <span class="cm">// that's the only change</span></code></pre>
+
+    <h3>Swap the PSR-7 HTTP library</h3>
+    <p>The router, middleware, and controllers only type-hint PSR-7 interfaces. To switch from Nyholm to Guzzle PSR-7 or Laminas Diactoros:</p>
+    <ol style="margin:0.5rem 0 1rem 1.5rem; line-height:2;">
+      <li>Replace <code>nyholm/psr7</code> in <code>composer.json</code></li>
+      <li>Update the request factory in <code>public/index.php</code></li>
+      <li>Nothing else changes</li>
+    </ol>
+
+    <h3>Add any PSR-15 middleware package</h3>
+    <pre data-lang="bash"><code>composer require middlewares/rate-limit</code></pre>
+    <pre data-lang="php"><code><span class="kw">use</span> <span class="cl">Middlewares\RateLimit</span>;
+
+<span class="var">$pipeline</span> = <span class="kw">new</span> <span class="cl">MiddlewarePipeline</span>([
+    <span class="var">$container</span>-><span class="fn">get</span>(<span class="cl">RequestLoggerMiddleware</span>::<span class="kw">class</span>),
+    <span class="kw">new</span> <span class="cl">RateLimit</span>(<span class="var">$limiter</span>),   <span class="cm">// ← drop it in</span>
+    <span class="var">$container</span>-><span class="fn">get</span>(<span class="cl">CorsMiddleware</span>::<span class="kw">class</span>),
+    <span class="var">$router</span>,
+]);</code></pre>
+  </section>
+
+  <!-- Config -->
+  <section id="config">
+    <h2><span class="icon">⚙️</span> Configuration</h2>
+    <pre data-lang="env"><code><span class="cm"># Application</span>
+APP_ENV=development     <span class="cm"># development | production</span>
+APP_DEBUG=true
+APP_TIMEZONE=UTC
+
+<span class="cm"># Database</span>
+DB_TYPE=mysql           <span class="cm"># mysql | pgsql | sqlite</span>
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=your_database
+DB_USER=your_user
+DB_PASS=your_password
+
+<span class="cm"># Logging</span>
+LOG_CHANNEL=stderr      <span class="cm"># stderr | file</span>
+LOG_LEVEL=debug
+LOG_PATH=/var/log/fastrest/app.log</code></pre>
+
+    <div class="callout tip">
+      <div class="callout-label">Production tip</div>
+      In production, set these as real environment variables (Apache <code>SetEnv</code>, Nginx <code>fastcgi_param</code>, Docker <code>ENV</code>). The <code>.env</code> file is a convenience for local dev only — it's in <code>.gitignore</code> and should never be committed.
+    </div>
+  </section>
+
+  <!-- Testing -->
+  <section id="testing">
+    <h2><span class="icon">🧪</span> Testing</h2>
+    <p>Tests use PHPUnit with an in-memory SQLite database — no real database required, no test-environment config needed.</p>
+    <pre data-lang="bash"><code>composer test</code></pre>
+
+    <h3>Testing a controller</h3>
+    <pre data-lang="php"><code><span class="kw">use</span> <span class="cl">FastREST\Database\Connection</span>;
+<span class="kw">use</span> <span class="cl">FastREST\Database\Database</span>;
+<span class="kw">use</span> <span class="cl">FastREST\Controllers\ProductController</span>;
+<span class="kw">use</span> <span class="cl">Nyholm\Psr7\Factory\Psr17Factory</span>;
+<span class="kw">use</span> <span class="cl">PHPUnit\Framework\TestCase</span>;
+<span class="kw">use</span> <span class="cl">Psr\Log\NullLogger</span>;
+
+<span class="kw">class</span> <span class="cl">ProductControllerTest</span> <span class="kw">extends</span> <span class="cl">TestCase</span>
+{
+    <span class="kw">private</span> <span class="cl">ProductController</span> <span class="var">$controller</span>;
+
+    <span class="kw">protected function</span> <span class="fn">setUp</span>(): <span class="kw">void</span>
+    {
+        <span class="var">$conn</span> = <span class="kw">new</span> <span class="cl">Connection</span>(<span class="str">'sqlite'</span>, <span class="str">''</span>, <span class="num">0</span>, <span class="str">':memory:'</span>, <span class="str">''</span>, <span class="str">''</span>);
+        <span class="var">$db</span>   = <span class="kw">new</span> <span class="cl">Database</span>(<span class="var">$conn</span>, <span class="kw">new</span> <span class="cl">NullLogger</span>());
+        <span class="var">$db</span>-><span class="fn">query</span>(<span class="str">'CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price REAL)'</span>);
+        <span class="var">$db</span>-><span class="fn">insert</span>(<span class="str">'products'</span>, [<span class="str">'name'</span> => <span class="str">'Widget'</span>, <span class="str">'price'</span> => <span class="num">9.99</span>]);
+
+        <span class="var">$this</span>-><span class="var">controller</span> = <span class="kw">new</span> <span class="cl">ProductController</span>(<span class="var">$db</span>, <span class="kw">new</span> <span class="cl">NullLogger</span>());
+    }
+
+    <span class="kw">public function</span> <span class="fn">testIndexReturns200</span>(): <span class="kw">void</span>
+    {
+        <span class="var">$factory</span>  = <span class="kw">new</span> <span class="cl">Psr17Factory</span>();
+        <span class="var">$request</span>  = <span class="var">$factory</span>-><span class="fn">createServerRequest</span>(<span class="str">'GET'</span>, <span class="str">'/products'</span>);
+        <span class="var">$response</span> = <span class="var">$this</span>-><span class="var">controller</span>-><span class="fn">index</span>(<span class="var">$request</span>);
+
+        <span class="var">$this</span>-><span class="fn">assertSame</span>(<span class="num">200</span>, <span class="var">$response</span>-><span class="fn">getStatusCode</span>());
+        <span class="var">$body</span> = <span class="fn">json_decode</span>((<span class="kw">string</span>) <span class="var">$response</span>-><span class="fn">getBody</span>(), <span class="kw">true</span>);
+        <span class="var">$this</span>-><span class="fn">assertSame</span>(<span class="str">'success'</span>, <span class="var">$body</span>[<span class="str">'status'</span>]);
+    }
+}</code></pre>
+  </section>
+
+  <!-- Migrating -->
+  <section id="migrating">
+    <h2><span class="icon">🚀</span> Migrating from v1</h2>
+
+    <h3>Controllers</h3>
+    <table>
+      <tr><th>v1</th><th>v2</th></tr>
+      <tr><td><code>static function indexAction()</code></td><td><code>public function index(ServerRequestInterface $r)</code></td></tr>
+      <tr><td><code>return array('status' => 'success')</code></td><td><code>return Response::json(['status' => 'success'])</code></td></tr>
+      <tr><td><code>Database::getInstance()</code></td><td>Constructor-injected <code>$this->db</code></td></tr>
+      <tr><td><code>Logger::getInstance()</code></td><td>Constructor-injected <code>$this->logger</code></td></tr>
+      <tr><td>Route auto-detected from URL</td><td>Explicit entry in <code>config/routes.php</code></td></tr>
+    </table>
+
+    <h3>Config</h3>
+    <table>
+      <tr><th>v1</th><th>v2</th></tr>
+      <tr><td><code>config/config.php</code> with <code>define()</code></td><td><code>.env</code> file via <code>$_ENV</code></td></tr>
+      <tr><td>Credentials hard-coded, committed to git</td><td><code>.env</code> excluded from git</td></tr>
+    </table>
+
+    <div class="callout tip">
+      <div class="callout-label">On explicit routes</div>
+      v1 auto-detected routes from class and method names. v2 routes are explicit. This is intentional — explicit routes are readable, grep-able, secure (no path traversal), and make it obvious what's in your API at a glance.
+    </div>
+  </section>
+
+  <!-- Structure -->
+  <section id="structure">
+    <h2><span class="icon">📁</span> Project Structure</h2>
+    <pre data-lang="text"><code>fastrest/
+├── config/
+│   ├── container.php        ← Service wiring (PSR-11 definitions)
+│   └── routes.php           ← Route table
+├── public/
+│   └── index.php            ← Entry point — only web-accessible dir
+├── src/
+│   ├── Controllers/         ← Your application controllers
+│   ├── Database/
+│   │   ├── Connection.php   ← PDO factory (env-aware, multi-DB)
+│   │   ├── Database.php     ← CRUD helper (all bugs fixed)
+│   │   └── QueryBuilder.php ← Fluent SELECT builder
+│   ├── Exceptions/
+│   │   └── HttpException.php
+│   ├── Helpers/
+│   │   ├── HttpClient.php   ← cURL wrapper (all methods)
+│   │   ├── HttpResponse.php ← Response value object
+│   │   └── OauthHelper.php  ← OAuth 1.0 header generator
+│   ├── Http/
+│   │   ├── MiddlewarePipeline.php
+│   │   ├── Response.php     ← JSON response factory
+│   │   └── Router.php       ← HTTP-verb-aware dispatcher
+│   └── Middleware/
+│       ├── CorsMiddleware.php
+│       ├── JsonBodyParserMiddleware.php
+│       └── RequestLoggerMiddleware.php
+├── tests/
+│   └── Unit/
+│       ├── Database/
+│       │   ├── DatabaseTest.php
+│       │   └── QueryBuilderTest.php
+│       └── Http/
+│           └── RouterTest.php
+├── .env.example
+├── .gitignore
+├── composer.json
+├── phpunit.xml
+└── README.md</code></pre>
+  </section>
+
+</main>
+
+<script>
+  // Active nav link tracking
+  const sections = document.querySelectorAll('section, .hero');
+  const navLinks  = document.querySelectorAll('nav a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

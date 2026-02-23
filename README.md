@@ -4,6 +4,13 @@
 
 FastREST started as a zero-learning-curve PHP framework: drop in a controller, name a method, get a route. No config, no boilerplate, no framework tax. That spirit is unchanged in v2.
 
+---
+
+## Requirements
+
+- **PHP 8.4+** (Uses latest language features and optimizations)
+- **Composer** (For dependency management)
+
 What *is* changed is everything underneath. v2 is built on the PHP standard interfaces (PSR-3, 4, 7, 11, 15) so every component — the logger, the HTTP layer, the container — can be swapped for any compatible package without touching your business logic. The original bugs that caused silent data corruption are fixed. Routes are HTTP-verb-aware. Credentials live in `.env`. Controllers are testable.
 
 ---

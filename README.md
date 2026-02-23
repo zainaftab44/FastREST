@@ -30,20 +30,39 @@ What *is* changed is everything underneath. v2 is built on the PHP standard inte
 
 ---
 
+## Installation
+
+### 1. Using Composer (Recommended)
+You can create a new project skeleton using the following command:
+
+```bash
+composer create-project fastrest/framework [project-name]
+```
+
+This will:
+- Download the framework and dependencies.
+- Copy `.env.example` to `.env`.
+- Set up the project structure.
+
+### 2. Manual Installation
+```bash
+git clone https://github.com/fastrest/framework.git [project-name]
+cd [project-name]
+composer install
+```
+
+---
+
 ## Quick Start
 
 ```bash
-# 1. Install dependencies
-composer install
-
-# 2. Set up environment
+# 1. Set up environment
 cp .env.example .env
-# Open .env and fill in your database credentials
 
-# 3. Serve locally
+# 2. Serve locally
 php -S localhost:8000 public/index.php
 
-# 4. Run tests
+# 3. Run tests
 composer test
 ```
 
